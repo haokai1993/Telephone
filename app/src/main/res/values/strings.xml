@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TelePhone</string>
     <string name="app_test">测试提交</string>
+    <string name="call_history">通话记录</string>
+    <string name="call_msg">信息</string>
+    <string name="phone_wifi">wifi</string>
+
+
 </resources>

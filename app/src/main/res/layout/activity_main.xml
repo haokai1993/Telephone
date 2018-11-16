@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <com.phone.telephone.weight.TimeView
         android:id="@+id/tv_time"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="25sp"
+        android:layout_marginLeft="25dp"
         android:textColor="@color/colorAccent"
-        android:layout_marginLeft="25dp"/>
+        android:textSize="25sp" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/btn_call_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/call_history" />
+
+    <Button
+        android:id="@+id/btn_call_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/phone_wifi" />
+
+    <Button
+        android:id="@+id/btn_call_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/call_msg" />
+
+
+</LinearLayout>
