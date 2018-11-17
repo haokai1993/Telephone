@@ -1,7 +1,6 @@
 package com.phone.telephone;
 
 import android.content.Intent;
-
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_call_msg:
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setType("vnd.android-dir/mms-sms");
-//                intent.setData(Uri.parse("content://mms-sms/conversations/13681869795"));
                 startActivity(intent);
                 break;
             case R.id.btn_call_wifi:
