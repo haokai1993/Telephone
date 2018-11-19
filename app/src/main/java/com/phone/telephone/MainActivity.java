@@ -1,53 +1,92 @@
 package com.phone.telephone;
 
 import android.content.Intent;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button btnCall, btnMsg, btnwifi;
+import com.blankj.utilcode.constant.PermissionConstants;
+import com.blankj.utilcode.util.BarUtils;
+import com.blankj.utilcode.util.PermissionUtils;
+import com.blankj.utilcode.util.PhoneUtils;
+import com.phone.telephone.utils.BatteryReceiver;
+import com.phone.telephone.view.BaseActivity;
+import com.phone.telephone.view.ContactsActivity;
+import com.phone.telephone.weight.BatteryView;
+
+import java.util.List;
+
+public class MainActivity extends BaseActivity {
+    private TextView tvdate, tvsim, tvbatter;
+    private BatteryView batteryView;
+    private BatteryReceiver mBatteryReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BarUtils.setStatusBarVisibility(this, false);
         setContentView(R.layout.activity_main);
-        initview();
+        initView();
+        PermissionUtils.permission(PermissionConstants.CONTACTS).rationale(new PermissionUtils.OnRationaleListener() {
+            @Override
+            public void rationale(ShouldRequest shouldRequest) {
+            }
+        }).callback(new PermissionUtils.FullCallback() {
+            @Override
+            public void onGranted(List<String> permissionsGranted) {
+            }
+
+            @Override
+            public void onDenied(List<String> permissionsDeniedForever, List<String> permissionsDenied) {
+
+            }
+        }).request();
     }
 
-    private void initview() {
-        btnCall = findViewById(R.id.btn_call_history);
-        btnCall.setOnClickListener(this);
-        btnMsg = findViewById(R.id.btn_call_msg);
-        btnMsg.setOnClickListener(this);
-        btnwifi = findViewById(R.id.btn_call_wifi);
-        btnwifi.setOnClickListener(this);
+    public void initView() {
+        mBatteryReceiver = new BatteryReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(mBatteryReceiver, intentFilter);
+        tvsim = findViewById(R.id.tv_sim);
+        tvbatter = findViewById(R.id.tv_batter_show);
+        batteryView = findViewById(R.id.battery_level);
+        if (PhoneUtils.isSimCardReady()) {
+            tvsim.setText(PhoneUtils.getSimOperatorByMnc());
+        } else {
+            tvsim.setText(getResources().getString(R.string.no_sim));
+        }
+        mBatteryReceiver.setOnBatterLeven(new BatteryReceiver.OnBatterLevel() {
+            @Override
+            public void setbatterlevel(int level) {
+                Log.i("haokai", "" + level);
+                batteryView.setPower(level);
+                tvbatter.setText(level + "%");
+            }
+        });
+        findViewById(R.id.tv_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        findViewById(R.id.tv_constact).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ContactsActivity.class));
+            }
+        });
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_call_history:
-                Intent contactIntent = new Intent();
-                contactIntent.setAction(Intent.ACTION_CALL_BUTTON);
-                startActivity(contactIntent);
-                break;
-            case R.id.btn_call_msg:
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setType("vnd.android-dir/mms-sms");
-                startActivity(intent);
-                break;
-            case R.id.btn_call_wifi:
-                Intent i = new Intent();
-                if (Build.VERSION.SDK_INT >= 11) { //Honeycomb
-                    i.setClassName("com.android.settings", "com.android.settings.Settings$WifiSettingsActivity");
-                } else {//other versions
-                    i.setClassName("com.android.settings", "com.android.settings.wifi.WifiSettings");
-                }
-                startActivity(i);
-                break;
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBatteryReceiver != null) {
+            unregisterReceiver(mBatteryReceiver);
+            mBatteryReceiver = null;
         }
     }
 }
